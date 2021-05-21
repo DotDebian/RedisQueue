@@ -8,6 +8,13 @@
     <artifactId>RedisQueue</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <repositories>
+        <repository>
+            <id>CronApp</id>
+            <url>https://artifactory.cronapp.io/public-release/</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>redis.clients</groupId>
@@ -32,6 +39,26 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson-extras -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson-extras</artifactId>
+            <version>2.8.5</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
@@ -65,29 +92,34 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>
+                                space.debian.RedisQueue.Application
+                            </mainClass>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>*:*</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>space.debian.RedisQueue.Application</mainClass>
-                        </manifest>
-                    </archive>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
             </plugin>
         </plugins>
     </build>
