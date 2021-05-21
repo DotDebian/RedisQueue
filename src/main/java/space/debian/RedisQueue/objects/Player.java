@@ -3,18 +3,18 @@ package space.debian.RedisQueue.objects;
 public class Player {
 
     private String name;
-    private Queue currentQueue;
+    private ServerQueue currentQueue = null;
 
     public Player(String name) {
         this.name = name;
     }
 
-    public Player(String name, Queue currentQueue) {
+    public Player(String name, ServerQueue currentQueue) {
         this.name = name;
         this.currentQueue = currentQueue;
     }
 
-    public void setCurrentQueue(Queue currentQueue) {
+    public void setCurrentQueue(ServerQueue currentQueue) {
         this.currentQueue = currentQueue;
     }
 
@@ -22,7 +22,11 @@ public class Player {
         return name;
     }
 
-    public Queue getCurrentQueue() {
+    public ServerQueue getCurrentQueue() {
         return currentQueue;
+    }
+
+    public boolean isInQueue() {
+        return currentQueue != null;
     }
 }

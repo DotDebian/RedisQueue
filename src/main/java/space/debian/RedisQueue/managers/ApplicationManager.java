@@ -7,6 +7,14 @@ import java.util.HashMap;
 public class ApplicationManager {
 
     private static ApplicationManager instance;
+
+    /**
+     * Mapping du pseudo du joueur & de son instance de Player.
+     * 
+     * @see Player
+     * @see ApplicationManager#getPlayers() 
+     * @see ApplicationManager#addPlayer(String playername) 
+     */
     private HashMap<String, Player> players = new HashMap<>();
 
     public ApplicationManager() {
@@ -21,7 +29,9 @@ public class ApplicationManager {
         return players;
     }
 
-    public void addPlayer(String playerName) {
-        players.put(playerName, new Player(playerName));
+    public Player addPlayer(String playerName) {
+        Player res = new Player(playerName);
+        players.put(playerName, res);
+        return res;
     }
 }

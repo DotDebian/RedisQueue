@@ -1,41 +1,65 @@
 package space.debian.RedisQueue.objects;
 
-import space.debian.RedisQueue.objects.enums.QueueType;
+import lombok.Getter;
+import lombok.Setter;
+import space.debian.RedisQueue.Application;
+import space.debian.RedisQueue.objects.messages.PlayerOutputMessage;
+import space.debian.RedisQueue.objects.messages.PlayerSendMessage;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
 
+@Getter
+@Setter
 public class ServerQueue {
 
-    private ArrayList<Queue> queues = new ArrayList<>();
-    private String serverName;
+    private final ArrayList<Player> queuedPlayers = new ArrayList<>();
+    private final String serverName;
+    private boolean whitelisted;
+    private int currentPlayers;
+    private int maxPlayers;
 
+    /**
+     * ServerQueue is representing one queue to a specific server.
+     * @param serverName The server you wanna create a queue for
+     */
     public ServerQueue(String serverName) {
         this.serverName = serverName;
-        for (QueueType queueType : QueueType.values())
-            queues.add(new Queue(queueType));
     }
 
-    public void addPlayerToQueue(String queueIdentifier, Player player) {
-
-        Optional<Queue> queue = queues.stream().filter(queueElement -> queueElement.getType().getIdentifier() == queueIdentifier).findFirst();
-
-        if (!queue.isPresent()) {
-
-            //TODO: SEND ERROR MESSAGE (UNKNOWN IDENTIFIER)
+    public void addPlayerToQueue(Player player) {
+        if (getQueuedPlayers().contains(player)) {
+            removeQueuedPlayer(player);
+            Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(player.getName(), "§a§lSuccès §f§l» §eVous avez quitté la queue pour le serveur " + serverName)));
             return;
         }
 
-        queue.get().addQueuedPlayer(player);
-        //TODO: SEND SUCCESSFUL QUEUE MESSAGE
+        if (player.isInQueue()) {
+            Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(player.getName(), "§c§lErreur §f§l» §eVous êtes déjà dans la queue pour le serveur " + player.getCurrentQueue().getServerName())));
+            return;
+        }
+
+        addQueuedPlayer(player);
+        Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(player.getName(), "§a§lSuccès §f§l» §eVous avez rejoins la queue pour le serveur " + serverName)));
     }
 
-    public ArrayList<Queue> getQueues() {
-        return queues;
+    public void sendPlayer() {
+        if (getCurrentPlayers() >= getMaxPlayers())
+            return;
+
+        Player toSend = queuedPlayers.get(0);
+        queuedPlayers.remove(toSend);
+
+        Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerSendMessage(toSend.getName(), getServerName())));
     }
 
-    public String getServerName() {
-        return serverName;
+    public void addQueuedPlayer(Player player) {
+        queuedPlayers.add(player);
+        player.setCurrentQueue(this);
+    }
+
+    public void removeQueuedPlayer(Player player) {
+        queuedPlayers.remove(player);
+        player.setCurrentQueue(null);
+        Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(player.getName(), "§a§lSuccès §f§l» §eVous avez quitté la queue pour le serveur " + player.getCurrentQueue().getServerName())));
     }
 }
