@@ -1,13 +1,18 @@
 package space.debian.RedisQueue.objects.messages;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@AllArgsConstructor @Getter @Setter
+@Getter @Setter
 public class AddToQueueMessage extends Message {
 
-    private static MessageType type = MessageType.ADD_TO_QUEUE;
+	public AddToQueueMessage(String playerName, String serverId) {
+		this.playerName = playerName;
+		this.serverId = serverId;
+		this.messageType = MessageType.ADD_TO_QUEUE;
+	}
+
     private String playerName;
     private String serverId;
 

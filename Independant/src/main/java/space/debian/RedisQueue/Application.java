@@ -7,9 +7,7 @@ import lombok.Getter;
 import space.debian.RedisQueue.managers.ApplicationManager;
 import space.debian.RedisQueue.managers.JedisManager;
 import space.debian.RedisQueue.managers.QueueManager;
-import space.debian.RedisQueue.objects.messages.AddToQueueMessage;
-import space.debian.RedisQueue.objects.messages.ClientUpdateMessage;
-import space.debian.RedisQueue.objects.messages.Message;
+import space.debian.RedisQueue.objects.messages.*;
 import space.debian.RedisQueue.suscribers.GameServerChannel;
 import space.debian.RedisQueue.utils.logging.ApplicationLogger;
 public class Application {
@@ -29,6 +27,11 @@ public class Application {
                     .of(Message.class)
                     .registerSubtype(AddToQueueMessage.class)
                     .registerSubtype(ClientUpdateMessage.class)
+                    .registerSubtype(ConsoleOutputMessage.class)
+                    .registerSubtype(PlayerOutputMessage.class)
+                    .registerSubtype(PlayerSendMessage.class)
+                    .registerSubtype(RemoveFromQueueMessage.class)
+                    .registerSubtype(ServerStatusMessage.class)
             ).create();
 
     public static void main(String[] args) {

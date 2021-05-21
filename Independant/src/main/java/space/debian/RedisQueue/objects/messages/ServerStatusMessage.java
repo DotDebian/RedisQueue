@@ -11,7 +11,6 @@ import java.util.HashMap;
 @AllArgsConstructor @Getter @Setter
 public class ServerStatusMessage extends Message {
 
-    private static MessageType type = MessageType.SERVER_STATUS;
     private HashMap<String, ArrayList<String>> queues;
 
     public void addServerQueue(ServerQueue queue) {
