@@ -6,4 +6,5 @@ import lombok.Setter;
 public abstract class Message {
 	@Getter @Setter
     protected MessageType messageType;
+	private final String type = this.getClass().getSimpleName();
 }
