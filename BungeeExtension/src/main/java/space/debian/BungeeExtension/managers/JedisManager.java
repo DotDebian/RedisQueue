@@ -6,6 +6,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import space.debian.BungeeExtension.Config;
 import space.debian.BungeeExtension.Main;
 
 public class JedisManager {
@@ -20,7 +21,7 @@ public class JedisManager {
     public JedisManager() throws Exception {
 
         instance = this;
-        jedisPool = new JedisPool(poolConfig, "localhost", 6379, 0);
+        jedisPool = new JedisPool(poolConfig, Main.getInstance().getConfig().redisHost, Main.getInstance().getConfig().redisPort, 0, Main.getInstance().getConfig().redisPassword);
         try {
             Jedis jedis = jedisPool.getResource();
             Main.getInstance().getLogger().info("Successfully connected to Jedis.");
