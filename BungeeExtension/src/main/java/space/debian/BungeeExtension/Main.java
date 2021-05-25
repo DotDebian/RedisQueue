@@ -22,7 +22,7 @@ public class Main extends JavaPlugin {
             .create();
 
     private JedisManager jedisManager;
-    private Config config;
+    private Config configuration;
 
     @Override
     public void onEnable() {
@@ -35,9 +35,9 @@ public class Main extends JavaPlugin {
             getLogger().severe(e.getMessage());
         }
 
-        config = initConfig();
+        configuration = initConfig();
 
-        if (config.isHub)
+        if (configuration.isHub)
             getCommand("hub").setExecutor(new Hub());
     }
 

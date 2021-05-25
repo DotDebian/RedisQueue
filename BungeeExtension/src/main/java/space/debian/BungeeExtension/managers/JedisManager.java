@@ -21,7 +21,7 @@ public class JedisManager {
     public JedisManager() throws Exception {
 
         instance = this;
-        jedisPool = new JedisPool(poolConfig, Main.getInstance().getConfig().redisHost, Main.getInstance().getConfig().redisPort, 0, Main.getInstance().getConfig().redisPassword);
+        jedisPool = new JedisPool(poolConfig, Main.getInstance().getConfiguration().redisHost, Main.getInstance().getConfiguration().redisPort, 0, Main.getInstance().getConfiguration().redisPassword);
         try {
             Jedis jedis = jedisPool.getResource();
             Main.getInstance().getLogger().info("Successfully connected to Jedis.");
