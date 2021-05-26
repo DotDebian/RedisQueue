@@ -9,6 +9,5 @@ public enum MessageType {
     //SERVER -> CLIENT
     PLAYER_OUTPUT,
     CONSOLE_OUTPUT,
-    SERVER_STATUS,
     PLAYER_SEND,
 }

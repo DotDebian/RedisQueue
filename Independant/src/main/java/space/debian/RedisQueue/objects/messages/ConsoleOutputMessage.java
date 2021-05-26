@@ -4,10 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor @Getter @Setter
+@Getter @Setter
 public class ConsoleOutputMessage extends Message {
 
-    private String playerName;
+    public ConsoleOutputMessage(String serverId, String message) {
+        this.serverId = serverId;
+        this.message = message;
+        this.messageType = MessageType.CONSOLE_OUTPUT;
+    }
+
+    private String serverId;
     private String message;
 
 }
