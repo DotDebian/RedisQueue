@@ -8,6 +8,8 @@ import space.debian.RedisQueue.Application;
 import space.debian.RedisQueue.objects.messages.*;
 import space.debian.RedisQueue.utils.logging.ApplicationLogger;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.util.Optional;
 
 public class ServerChannel extends JedisPubSub {
@@ -36,7 +38,21 @@ public class ServerChannel extends JedisPubSub {
             }
 
             case PLAYER_SEND: {
-
+            	PlayerSendMessage message = (PlayerSendMessage) preMessage;
+				Optional<Player> player = Optional.ofNullable(Bukkit.getPlayer(message.getPlayerName()));
+				if (!player.isPresent())
+					return;
+				try {
+					ByteArrayOutputStream b = new ByteArrayOutputStream();
+					DataOutputStream out = new DataOutputStream(b);
+					out.writeUTF("Connect");
+					out.writeUTF(message.getServerId());
+					player.get().sendPluginMessage(Main.getInstance(), "BungeeCord", b.toByteArray());
+					b.close();
+					out.close();
+				} catch (Exception e) {
+					Main.getInstance().getLogger().severe("Failed to send " + player.get().getName() + " to " + message.getServerId() + ".");
+				}
             }
 
         }

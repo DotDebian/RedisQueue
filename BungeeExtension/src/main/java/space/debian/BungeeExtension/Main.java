@@ -46,6 +46,7 @@ public class Main extends JavaPlugin {
         if (configuration.isHub) {
             getLogger().info("Instancing the Hub command since the server is defined as a hub.");
             getCommand("hub").setExecutor(new Hub());
+			getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         } else {
             getLogger().info("Instancing the ClientData update timer since the server is not defined as a Hub.");
             dataUpdateTimer = new Timer();
