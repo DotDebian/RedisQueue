@@ -34,4 +34,12 @@ public class ApplicationManager {
         players.put(playerName, res);
         return res;
     }
+
+    public void removePlayer(String playerName) {
+        players.remove(playerName);
+    }
+
+    public void removePlayer(Player player) {
+        players.remove(player.getName());
+    }
 }

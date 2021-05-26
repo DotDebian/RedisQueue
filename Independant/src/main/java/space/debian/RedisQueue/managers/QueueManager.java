@@ -46,13 +46,13 @@ public class QueueManager {
         serverQueue.get().addPlayerToQueue(player.get());
     }
 
-    public void removePlayerFromQueue(String destination, String playerName) {
+    public void removePlayerFromQueue(String playerName) {
         Optional<Player> player = Optional.ofNullable(ApplicationManager.get().getPlayers().get(playerName));
 
-        if (player.isPresent() && player.get().isInQueue() && player.get().getCurrentQueue().getServerName().equalsIgnoreCase(destination)) {
+        if (player.isPresent() && player.get().isInQueue()) {
             player.get().getCurrentQueue().removeQueuedPlayer(player.get());
         } else {
-            Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(playerName, "§c§lErreur §f§l» §eVous n'êtes pas en queue pour le serveur " + destination)));
+            Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(playerName, "§c§lErreur §f§l» §eVous n'êtes pas en queue pour ce serveur.")));
         }
     }
 
@@ -63,6 +63,8 @@ public class QueueManager {
             serverQueue.get().setCurrentPlayers(message.getCurrentPlayers());
             serverQueue.get().setMaxPlayers(message.getMaxPlayers());
             ApplicationLogger.get().info("Received update from " + message.getServerId());
+        } else {
+            serverQueues.add(new ServerQueue(message.getServerId()));
         }
     }
 

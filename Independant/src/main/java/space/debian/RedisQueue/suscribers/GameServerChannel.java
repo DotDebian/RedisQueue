@@ -25,7 +25,7 @@ public class GameServerChannel extends JedisPubSub {
 
             case REMOVE_FROM_QUEUE: {
                 RemoveFromQueueMessage message = (RemoveFromQueueMessage) preMessage;
-                Application.getQueueManager().removePlayerFromQueue(message.getServerId(), message.getPlayerName());
+                Application.getQueueManager().removePlayerFromQueue(message.getPlayerName());
                 break;
             }
 

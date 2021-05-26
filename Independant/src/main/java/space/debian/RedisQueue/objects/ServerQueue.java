@@ -3,6 +3,7 @@ package space.debian.RedisQueue.objects;
 import lombok.Getter;
 import lombok.Setter;
 import space.debian.RedisQueue.Application;
+import space.debian.RedisQueue.managers.ApplicationManager;
 import space.debian.RedisQueue.objects.messages.PlayerOutputMessage;
 import space.debian.RedisQueue.objects.messages.PlayerSendMessage;
 
@@ -47,7 +48,9 @@ public class ServerQueue {
             return;
 
         Player toSend = queuedPlayers.get(0);
+        toSend.setCurrentQueue(null);
         queuedPlayers.remove(toSend);
+        ApplicationManager.get().removePlayer(toSend);
 
         Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerSendMessage(toSend.getName(), getServerName())));
     }
@@ -60,6 +63,7 @@ public class ServerQueue {
     public void removeQueuedPlayer(Player player) {
         queuedPlayers.remove(player);
         player.setCurrentQueue(null);
+        ApplicationManager.get().removePlayer(player);
         Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(player.getName(), "§a§lSuccès §f§l» §eVous avez quitté la queue pour le serveur " + player.getCurrentQueue().getServerName())));
     }
 }

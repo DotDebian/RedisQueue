@@ -31,7 +31,6 @@ public class Application {
                     .registerSubtype(PlayerOutputMessage.class)
                     .registerSubtype(PlayerSendMessage.class)
                     .registerSubtype(RemoveFromQueueMessage.class)
-                    .registerSubtype(ServerStatusMessage.class)
             ).create();
 
     public static void main(String[] args) {
