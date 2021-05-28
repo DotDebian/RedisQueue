@@ -31,17 +31,18 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        instance = this;
+
+        getLogger().info("Loading configuration.");
+        configuration = initConfig();
 
         getLogger().info("Instancing the Jedis manager.");
 
         try {
             jedisManager = new JedisManager();
         } catch (Exception e) {
-            getLogger().severe(e.getMessage());
+            e.printStackTrace();
         }
-
-        getLogger().info("Loading configuration.");
-        configuration = initConfig();
 
         if (configuration.isHub) {
             getLogger().info("Instancing the Hub command since the server is defined as a hub.");
@@ -54,14 +55,19 @@ public class Main extends JavaPlugin {
                 @Override
                 public void run() {
                     getJedisManager().publish("BungeeQueue", Main.getGson().toJson(
-                            new ClientUpdateMessage(configuration.serverId, getServer().getMaxPlayers(), getServer().getOnlinePlayers().size(), getServer().hasWhitelist())
+                            new ClientUpdateMessage(configuration.serverId, getServer().getOnlinePlayers().size(), getServer().getMaxPlayers(), getServer().hasWhitelist())
                     ));
                 }
-            }, 15000L, 15000L);
+            }, 10000L, 10000L);
         }
 
         getLogger().info("Suscribing to the server data message channel.");
         jedisManager.registerSuscriber(ServerChannel.class, "server_data");
+    }
+
+    @Override
+    public void onDisable() {
+        JedisManager.getInstance().getSuscribersThreads().forEach(Thread::stop);
     }
 
     public Config initConfig() {
@@ -72,14 +78,16 @@ public class Main extends JavaPlugin {
         try {
             bufferedReader = new BufferedReader(new FileReader(path));
         } catch (FileNotFoundException e) {
-            getLogger().severe("Creating a new configuration file.");
+            getLogger().info("Creating a new configuration file.");
             res = new Config();
             try {
-                gson.toJson(res, new FileWriter(path));
+                Writer writer = new FileWriter(path);
+                gson.toJson(res, writer);
+                writer.close();
             } catch (IOException ioException) {
                 getLogger().severe("Can't write configuration file to data folder.");
             }
-            getLogger().severe("Configuration file saved.");
+            getLogger().info("Configuration file saved.");
             return res;
         }
 

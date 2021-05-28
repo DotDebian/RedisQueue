@@ -1,15 +1,16 @@
 package space.debian.RedisQueue.suscribers;
 
-import com.google.gson.JsonSyntaxException;
 import redis.clients.jedis.JedisPubSub;
 import space.debian.RedisQueue.Application;
-import space.debian.RedisQueue.objects.messages.*;
+import space.debian.RedisQueue.objects.messages.AddToQueueMessage;
+import space.debian.RedisQueue.objects.messages.ClientUpdateMessage;
+import space.debian.RedisQueue.objects.messages.Message;
+import space.debian.RedisQueue.objects.messages.RemoveFromQueueMessage;
 import space.debian.RedisQueue.utils.logging.ApplicationLogger;
 
 public class GameServerChannel extends JedisPubSub {
 
     public void onMessage(String channel, String msg) {
-		ApplicationLogger.get().info("Received \"" + msg + "\" coming from " + channel + ".");
         Message preMessage;
 		try {
 			preMessage = Application.getGson().fromJson(msg, Message.class);

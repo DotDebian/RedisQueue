@@ -7,7 +7,6 @@ import space.debian.RedisQueue.objects.messages.ClientUpdateMessage;
 import space.debian.RedisQueue.objects.messages.PlayerOutputMessage;
 import space.debian.RedisQueue.utils.logging.ApplicationLogger;
 
-import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Timer;
@@ -58,14 +57,15 @@ public class QueueManager {
 
     public void updateClientData(ClientUpdateMessage message) {
         Optional<ServerQueue> serverQueue = serverQueues.stream().filter(serverQueueElement -> serverQueueElement.getServerName().equalsIgnoreCase(message.getServerId())).findFirst();
-        if (serverQueue.isPresent()) {
-            serverQueue.get().setWhitelisted(message.isWhitelisted());
-            serverQueue.get().setCurrentPlayers(message.getCurrentPlayers());
-            serverQueue.get().setMaxPlayers(message.getMaxPlayers());
-            ApplicationLogger.get().info("Received update from " + message.getServerId());
-        } else {
-            serverQueues.add(new ServerQueue(message.getServerId()));
+        if (!serverQueue.isPresent()) {
+            ServerQueue queue = new ServerQueue(message.getServerId());
+            serverQueues.add(queue);
+            serverQueue = Optional.of(queue);
         }
+        serverQueue.get().setWhitelisted(message.isWhitelisted());
+        serverQueue.get().setCurrentPlayers(message.getCurrentPlayers());
+        serverQueue.get().setMaxPlayers(message.getMaxPlayers());
+        ApplicationLogger.get().info("Received update from " + message.getServerId());
     }
 
 }

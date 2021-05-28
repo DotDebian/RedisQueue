@@ -5,7 +5,10 @@ import org.bukkit.entity.Player;
 import redis.clients.jedis.JedisPubSub;
 import space.debian.BungeeExtension.Main;
 import space.debian.RedisQueue.Application;
-import space.debian.RedisQueue.objects.messages.*;
+import space.debian.RedisQueue.objects.messages.ConsoleOutputMessage;
+import space.debian.RedisQueue.objects.messages.Message;
+import space.debian.RedisQueue.objects.messages.PlayerOutputMessage;
+import space.debian.RedisQueue.objects.messages.PlayerSendMessage;
 import space.debian.RedisQueue.utils.logging.ApplicationLogger;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +18,6 @@ import java.util.Optional;
 public class ServerChannel extends JedisPubSub {
 
     public void onMessage(String channel, String msg) {
-        ApplicationLogger.get().info("Received \"" + msg + "\" coming from " + channel + ".");
         Message preMessage;
         try {
             preMessage = Application.getGson().fromJson(msg, Message.class);

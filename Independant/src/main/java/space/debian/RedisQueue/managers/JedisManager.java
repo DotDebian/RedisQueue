@@ -21,6 +21,7 @@ public class JedisManager {
         try {
             Jedis jedis = jedisPool.getResource();
             ApplicationLogger.get().info("Successfully connected to Jedis.");
+            jedis.close();
         } catch (JedisConnectionException e) {
             throw new Exception("Redis server is unavailable.");
         }
@@ -43,7 +44,9 @@ public class JedisManager {
 
     public void publish(String channel, String message) {
         try {
-            jedisPool.getResource().publish(channel, message);
+            Jedis j = jedisPool.getResource();
+            j.publish(channel, message);
+            j.close();
         } catch (JedisConnectionException e) {
 
             ApplicationLogger.get().error("An error occured while publishing to " + channel + ".");

@@ -6,14 +6,17 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
-import space.debian.BungeeExtension.Config;
 import space.debian.BungeeExtension.Main;
+
+import java.util.ArrayList;
 
 public class JedisManager {
 
     final JedisPoolConfig poolConfig = new JedisPoolConfig();
     @Getter
     JedisPool jedisPool;
+    @Getter
+    ArrayList<Thread> suscribersThreads = new ArrayList<>();
 
     @Getter
     private static JedisManager instance;
@@ -21,10 +24,15 @@ public class JedisManager {
     public JedisManager() throws Exception {
 
         instance = this;
-        jedisPool = new JedisPool(poolConfig, Main.getInstance().getConfiguration().redisHost, Main.getInstance().getConfiguration().redisPort, 0, Main.getInstance().getConfiguration().redisPassword);
+        poolConfig.setMaxWaitMillis(2000);
+        if (Main.getInstance().getConfiguration().getRedisPassword() != null)
+            jedisPool = new JedisPool(poolConfig, Main.getInstance().getConfiguration().redisHost, Main.getInstance().getConfiguration().redisPort, 2000, Main.getInstance().getConfiguration().redisPassword);
+        else
+            jedisPool = new JedisPool(poolConfig, Main.getInstance().getConfiguration().redisHost, Main.getInstance().getConfiguration().redisPort);
         try {
             Jedis jedis = jedisPool.getResource();
             Main.getInstance().getLogger().info("Successfully connected to Jedis.");
+            jedis.close();
         } catch (JedisConnectionException e) {
             throw new Exception("Redis server is unavailable.");
         }
@@ -37,7 +45,9 @@ public class JedisManager {
             String threadName = subscriber.getSimpleName() + "SubscriberThread";
 
             Main.getInstance().getLogger().info("Redis channel \"" + channels[0] + "\" successfully suscribed.");
-            new Thread(() -> jedisPool.getResource().subscribe(suscriberInstance, channels), Character.toLowerCase(threadName.charAt(0)) + threadName.substring(1)).start();
+            Thread t = new Thread(() -> jedisPool.getResource().subscribe(suscriberInstance, channels));
+            suscribersThreads.add(t);
+            t.start();
         } catch (InstantiationException | IllegalAccessException | JedisConnectionException e) {
 
             Main.getInstance().getLogger().warning("An error occured while instancing " + subscriber.getSimpleName() + " suscriber.");
@@ -47,7 +57,9 @@ public class JedisManager {
 
     public void publish(String channel, String message) {
         try {
-            jedisPool.getResource().publish(channel, message);
+            Jedis j = jedisPool.getResource();
+            j.publish(channel, message);
+            j.close();
         } catch (JedisConnectionException e) {
 
             Main.getInstance().getLogger().warning("An error occured while publishing to " + channel + ".");

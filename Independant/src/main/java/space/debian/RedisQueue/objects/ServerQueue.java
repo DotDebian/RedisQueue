@@ -44,8 +44,17 @@ public class ServerQueue {
     }
 
     public void sendPlayer() {
-        if (getCurrentPlayers() >= getMaxPlayers())
+        if (getCurrentPlayers() >= getMaxPlayers()) {
+            queuedPlayers.forEach((p) -> Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(p.getName(), "§6§lQueue §f§l» §eLe serveur " + getServerName() + " est plein."))));
             return;
+        } else if (queuedPlayers.isEmpty()) {
+            return;
+        } else if (isWhitelisted()) {
+            queuedPlayers.forEach((p) -> Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(p.getName(), "§6§lQueue §f§l» §eLe serveur " + getServerName() + " est sous whitelist."))));
+            return;
+        }
+
+        queuedPlayers.forEach((p) -> Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(p.getName(), "§6§lQueue §f§l» §eVous êtes à la position " + (queuedPlayers.indexOf(p) + 1) + "/" + queuedPlayers.size() + "."))));
 
         Player toSend = queuedPlayers.get(0);
         toSend.setCurrentQueue(null);
@@ -62,8 +71,6 @@ public class ServerQueue {
 
     public void removeQueuedPlayer(Player player) {
         queuedPlayers.remove(player);
-        player.setCurrentQueue(null);
         ApplicationManager.get().removePlayer(player);
-        Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(player.getName(), "§a§lSuccès §f§l» §eVous avez quitté la queue pour le serveur " + player.getCurrentQueue().getServerName())));
     }
 }

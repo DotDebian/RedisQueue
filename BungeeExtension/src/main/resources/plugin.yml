@@ -1,3 +1,5 @@
-main: space.debian.BungeeExtension
+main: space.debian.BungeeExtension.Main
 name: BungeeExtension
 version: 1.0
+commands:
+  hub:
