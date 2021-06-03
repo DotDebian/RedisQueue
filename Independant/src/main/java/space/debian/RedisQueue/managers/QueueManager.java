@@ -25,7 +25,7 @@ public class QueueManager {
             public void run() {
                 serverQueues.forEach(ServerQueue::sendPlayer);
             }
-        }, 1000L, 1000L);
+        }, Long.parseLong(Application.getConfig().getProperty("queueSpeed")), Long.parseLong(Application.getConfig().getProperty("queueSpeed")));
         getRuntime().addShutdownHook(new Thread(queueTimer::cancel));
     }
 

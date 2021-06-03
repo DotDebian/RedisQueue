@@ -5,6 +5,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisConnectionException;
+import space.debian.RedisQueue.Application;
 import space.debian.RedisQueue.utils.logging.ApplicationLogger;
 
 public class JedisManager {
@@ -17,7 +18,7 @@ public class JedisManager {
     public JedisManager() throws Exception {
 
         instance = this;
-        jedisPool = new JedisPool(poolConfig, "localhost", 6379, 0);
+        jedisPool = new JedisPool(poolConfig, Application.getConfig().getProperty("redisHost"), Integer.parseInt(Application.getConfig().getProperty("redisPort")), 0);
         try {
             Jedis jedis = jedisPool.getResource();
             ApplicationLogger.get().info("Successfully connected to Jedis.");
