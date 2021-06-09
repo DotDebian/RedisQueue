@@ -53,5 +53,6 @@ Chacun de ses messages possède sa propre class, destinée ensuite à la seriali
 
 ### Créer son extension
 
-Pour créer sa propre extension, il est nécessaire d'écouter les messages entrant sur `Extension` via Redis, et de déserializer les messages pour traiter correctement `PLAYER_OUTPUT`, `CONSOLE_OUTPUT` et `PLAYER_SEND`.
+Pour créer sa propre extension, il est nécessaire d'écouter les messages entrant sur `Extension` via Redis, et de les déserializer  pour traiter correctement `PLAYER_OUTPUT`, `CONSOLE_OUTPUT` et `PLAYER_SEND`.
+
 Selon les besoins, vous pouvez publier sur `server_data` les messages `ADD_TO_QUEUE`, `REMOVE_FROM_QUEUE` et `CLIENT_UPDATE`.
