@@ -54,7 +54,7 @@ public class Main extends JavaPlugin {
             dataUpdateTimer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
-                    getJedisManager().publish("BungeeQueue", Main.getGson().toJson(
+                    getJedisManager().publish("Extension", Main.getGson().toJson(
                             new ClientUpdateMessage(configuration.serverId, getServer().getOnlinePlayers().size(), getServer().getMaxPlayers(), getServer().hasWhitelist())
                     ));
                 }

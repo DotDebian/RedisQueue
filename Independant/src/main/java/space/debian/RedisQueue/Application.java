@@ -84,7 +84,7 @@ public class Application {
         queueManager = new QueueManager();
         ApplicationLogger.get().info("Queue manager successfully instantiated.");
 
-        JedisManager.getInstance().registerSuscriber(GameServerChannel.class, "BungeeQueue");
+        JedisManager.getInstance().registerSuscriber(GameServerChannel.class, "Extension");
 
         ApplicationLogger.get().info("RedisQueue is now online and listening !");
     }

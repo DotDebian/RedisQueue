@@ -10,7 +10,7 @@ public class Hub implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        Main.getInstance().getJedisManager().publish("BungeeQueue", Main.getGson().toJson(
+        Main.getInstance().getJedisManager().publish("Extension", Main.getGson().toJson(
                 new AddToQueueMessage(commandSender.getName(), "game")
         ));
         return true;
