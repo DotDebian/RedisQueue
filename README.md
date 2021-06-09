@@ -6,7 +6,7 @@ Usage
 Ce projet est divisé en deux modules distincts:
 
 #### Independant
-Ce module constitue le coeur du système est du projet. Il s'agit d'un .JAR indépendant à lancer via `java -jar`. Pour le bon fonctionnement de celui-ci, une connexion à un serveur Redis doit être disponible.
+Ce module correspond au coeur du système et du projet. Il s'agit d'un .JAR indépendant à lancer via `java -jar`. Pour le bon fonctionnement de celui-ci, une connexion à un serveur Redis doit être disponible.
 Au premier lancement, la configuration suivante est créée et doit être éditée:
 ```Properties
 redisHost:127.0.0.1 #Adresse IP du serveur Redis à utiliser
@@ -37,7 +37,7 @@ Une fois l'Independant et les deux serveurs de jeu lancés, vous pouvez effectue
 
 Documentation technique
 ------
-Le fonctionnement technique de ce projet s'axe autour de l'utilisation de deux canals de messaging distincts: `server_data` pour la communication vers l'Independant depuis une extension, et `Extension` pour la communication depuis l'extension BungeeCord.
+Le fonctionnement technique de ce projet s'axe autour de l'utilisation de deux canaux de messaging distincts: `server_data` pour la communication vers l'Independant depuis une extension, et `Extension` pour la communication depuis l'extension BungeeCord.
 
 Différents messages sérializés à l'aide de la librairie GSON sont envoyés sur ces canaux:
 | Type du message        | Identifiant           | Description  |
@@ -49,7 +49,7 @@ Différents messages sérializés à l'aide de la librairie GSON sont envoyés s
 | CLIENT      | CONSOLE_OUTPUT | Message envoyé à l'instance de jeu pour communiquer avec la console (chat). |
 | CLIENT      | PLAYER_SEND | Message envoyé à l'instance de jeu indiquant qu'un joueur doit être envoyé sur une autre instance. |
 
-Chacun de ses messages possède sa propre class, destinée ensuite à la serialization via Gson.
+Chacun de ses messages possède sa propre classe, destinée ensuite à la serialization via Gson.
 
 ### Créer son extension
 
