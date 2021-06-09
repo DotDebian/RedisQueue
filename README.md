@@ -34,3 +34,24 @@ Une fois l'application redémarrée, il est nécessaire d'y relier un second ser
 
 ------
 Une fois l'Independant et les deux serveurs de jeu lancés, vous pouvez effectuer /hub sur le serveur Limbo pour vous envoyer vers le serveur de jeu.
+
+Documentation technique
+------
+Le fonctionnement technique de ce projet s'axe autour de l'utilisation de deux canals de messaging distincts: `server_data` pour la communication vers l'Independant depuis une extension, et `Extension` pour la communication depuis l'extension BungeeCord.
+
+Différents messages sérializés à l'aide de la librairie GSON sont envoyés sur ces canaux:
+| Type du message        | Identifiant           | Description  |
+|:-------------:|:-------------:|:-----:|
+| SERVER      | ADD_TO_QUEUE | Message envoyé au serveur pour demander l'ajout d'un joueur à une queue. |
+| SERVER      | REMOVE_FROM_QUEUE | Message envoyé au serveur pour demander la suppression d'un joueur à une queue. |
+| SERVER      | CLIENT_UPDATE | Message envoyé au serveur pour indiquer l'état de l'instance de jeu. |
+| CLIENT      | PLAYER_OUTPUT | Message envoyé à l'instance de jeu pour communiquer avec le joueur (chat). |
+| CLIENT      | CONSOLE_OUTPUT | Message envoyé à l'instance de jeu pour communiquer avec la console (chat). |
+| CLIENT      | PLAYER_SEND | Message envoyé à l'instance de jeu indiquant qu'un joueur doit être envoyé sur une autre instance. |
+
+Chacun de ses messages possède sa propre class, destinée ensuite à la serialization via Gson.
+
+### Créer son extension
+
+Pour créer sa propre extension, il est nécessaire d'écouter les messages entrant sur `Extension` via Redis, et de déserializer les messages pour traiter correctement `PLAYER_OUTPUT`, `CONSOLE_OUTPUT` et `PLAYER_SEND`.
+Selon les besoins, vous pouvez publier sur `server_data` les messages `ADD_TO_QUEUE`, `REMOVE_FROM_QUEUE` et `CLIENT_UPDATE`.
