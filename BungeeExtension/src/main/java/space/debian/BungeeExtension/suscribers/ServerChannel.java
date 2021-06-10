@@ -45,6 +45,7 @@ public class ServerChannel extends JedisPubSub {
 				if (!player.isPresent())
 					return;
 				try {
+					player.get().sendMessage("§6§lQueue §f§l» §eConnexion en cours vers le serveur " + message.getServerId());
 					ByteArrayOutputStream b = new ByteArrayOutputStream();
 					DataOutputStream out = new DataOutputStream(b);
 					out.writeUTF("Connect");

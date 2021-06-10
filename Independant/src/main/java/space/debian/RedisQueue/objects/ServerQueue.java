@@ -54,14 +54,14 @@ public class ServerQueue {
             return;
         }
 
+		Player toSend = queuedPlayers.get(0);
+		toSend.setCurrentQueue(null);
+		queuedPlayers.remove(toSend);
+		ApplicationManager.get().removePlayer(toSend);
+
+		Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerSendMessage(toSend.getName(), getServerName())));
+
         queuedPlayers.forEach((p) -> Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerOutputMessage(p.getName(), "§6§lQueue §f§l» §eVous êtes à la position " + (queuedPlayers.indexOf(p) + 1) + "/" + queuedPlayers.size() + "."))));
-
-        Player toSend = queuedPlayers.get(0);
-        toSend.setCurrentQueue(null);
-        queuedPlayers.remove(toSend);
-        ApplicationManager.get().removePlayer(toSend);
-
-        Application.getJedisManager().publish("server_data", Application.getGson().toJson(new PlayerSendMessage(toSend.getName(), getServerName())));
     }
 
     public void addQueuedPlayer(Player player) {
